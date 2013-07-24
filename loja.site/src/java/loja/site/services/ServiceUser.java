@@ -73,11 +73,50 @@ public class ServiceUser {
             t.setUserName(userName);
             t.setPassword(Criptografia.md5(password));
             t.setEmail(email);
-            
+
             BOFactory.insert(new DAOUser(), t);
 
             j.put("id", t.getId());
             j.put("success", true);
+        } catch (Exception e) {
+            j.put("success", false);
+            j.put("message", e.getMessage());
+        }
+
+        return j.toString();
+
+    }
+
+    @POST
+    @Path("update")
+    public String update(
+            @FormParam("id") String id,
+            @FormParam("username") String userName,
+            @FormParam("password") String password,
+            @FormParam("email") String email) throws Exception {
+
+        JSONObject j = new JSONObject();
+
+        try {
+
+            TOUser t = new TOUser();
+            t.setId(id);
+
+            t = (TOUser) BOFactory.get(new DAOUser(), t);
+
+            if (t == null) {
+                j.put("success", false);
+                j.put("message", "Usuário não encontrado");
+            } else {
+                t.setEmail(email);
+                t.setUserName(userName);
+                t.setPassword(Criptografia.md5(password));
+
+                BOFactory.update(new DAOUser(), t);
+            }
+
+            j.put("success", true);
+
         } catch (Exception e) {
             j.put("success", false);
             j.put("message", e.getMessage());
