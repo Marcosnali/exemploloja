@@ -125,4 +125,33 @@ public class ServiceUser {
         return j.toString();
 
     }
+
+    @POST
+    @Path("delete")
+    public String delete(@FormParam("id") String id) throws Exception {
+        JSONObject j = new JSONObject();
+
+        try {
+
+            TOUser t = new TOUser();
+            t.setId(id);
+
+            t = (TOUser) BOFactory.get(new DAOUser(), t);
+
+            if (t == null) {
+                j.put("success", false);
+                j.put("message", "Usuário não encontrado");
+            } else {
+                BOFactory.delete(new DAOUser(), t);
+            }
+
+            j.put("success", true);
+
+        } catch (Exception e) {
+            j.put("success", false);
+            j.put("message", e.getMessage());
+        }
+
+        return j.toString();
+    }
 }
